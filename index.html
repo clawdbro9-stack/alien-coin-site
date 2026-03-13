@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PROJECT: INITIAL CONTACT</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: #000;
+      color: #c0c0c0;
+      font-family: 'Share Tech Mono', monospace;
+      overflow-x: hidden;
+    }
+    
+    #canvas-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    
+    .content {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+    }
+    
+    /* Landing Section */
+    .landing {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    
+    .title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2rem, 8vw, 5rem);
+      font-weight: 900;
+      letter-spacing: 0.3em;
+      color: #e0e0e0;
+      text-shadow: 
+        0 0 10px rgba(192, 192, 192, 0.8),
+        0 0 30px rgba(192, 192, 192, 0.5),
+        0 0 60px rgba(192, 192, 192, 0.3);
+      animation: flicker 4s infinite;
+      margin-bottom: 1rem;
+    }
+    
+    .subtitle {
+      font-size: clamp(0.8rem, 2vw, 1.2rem);
+      color: #808080;
+      letter-spacing: 0.5em;
+      margin-bottom: 3rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .scroll-hint {
+      position: absolute;
+      bottom: 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .scroll-hint:hover {
+      transform: translateY(5px);
+    }
+    
+    .scroll-hint span {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: #606060;
+    }
+    
+    .scroll-arrow {
+      width: 20px;
+      height: 20px;
+      border-right: 2px solid #606060;
+      border-bottom: 2px solid #606060;
+      transform: rotate(45deg);
+      animation: bounce 2s infinite;
+    }
+    
+    /* The Truth Section */
+    .truth-section {
+      min-height: 100vh;
+      padding: 4rem 2rem;
+    }
+    
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.5rem, 5vw, 3rem);
+      text-align: center;
+      margin-bottom: 3rem;
+      color: #d0d0d0;
+      letter-spacing: 0.2em;
+    }
+    
+    .coins-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .coin {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #e8e8e8 0%, #a8a8a8 50%, #c0c0c0 100%);
+      box-shadow: 
+        inset 0 0 30px rgba(0,0,0,0.5),
+        0 0 20px rgba(192, 192, 192, 0.3),
+        0 10px 30px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.5s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .coin::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent 40%,
+        rgba(255,255,255,0.3) 50%,
+        transparent 60%
+      );
+      transform: rotate(45deg);
+      transition: all 0.5s ease;
+    }
+    
+    .coin:hover {
+      transform: scale(1.1) rotateY(180deg);
+      box-shadow: 
+        inset 0 0 30px rgba(0,0,0,0.5),
+        0 0 40px rgba(192, 192, 192, 0.6),
+        0 10px 40px rgba(0,0,0,0.5);
+    }
+    
+    .coin:hover::before {
+      animation: shine 0.5s;
+    }
+    
+    .coin-symbol {
+      font-size: 4rem;
+      color: #404040;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+    }
+    
+    .coin-label {
+      position: absolute;
+      bottom: -2.5rem;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      color: #808080;
+      white-space: nowrap;
+    }
+    
+    /* Messages Section */
+    .messages-section {
+      min-height: 100vh;
+      padding: 4rem 2rem;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,20,0,0.3) 100%);
+    }
+    
+    .transmission {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      border: 1px solid #303030;
+      background: rgba(0,0,0,0.5);
+      position: relative;
+    }
+    
+    .transmission::before {
+      content: 'INCOMING TRANSMISSION';
+      position: absolute;
+      top: -12px;
+      left: 2rem;
+      background: #000;
+      padding: 0 1rem;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      color: #00ff00;
+      letter-spacing: 0.2em;
+      animation: blink 1s infinite;
+    }
+    
+    .transmission-text {
+      font-family: 'Share Tech Mono', monospace;
+      color: #00ff00;
+      font-size: 1rem;
+      line-height: 1.8;
+      text-shadow: 0 0 10px rgba(0,255,0,0.5);
+    }
+    
+    .decoded {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px dashed #303030;
+      color: #a0a0a0;
+      font-style: italic;
+    }
+    
+    /* Join Section */
+    .join-section {
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    
+    .cta-button {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      padding: 1rem 3rem;
+      background: transparent;
+      border: 2px solid #c0c0c0;
+      color: #c0c0c0;
+      cursor: pointer;
+      letter-spacing: 0.2em;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(192,192,192,0.2), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .cta-button:hover {
+      background: rgba(192,192,192,0.1);
+      box-shadow: 0 0 30px rgba(192,192,192,0.3);
+    }
+    
+    .cta-button:hover::before {
+      left: 100%;
+    }
+    
+    /* Animations */
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      92% { opacity: 1; }
+      93% { opacity: 0.8; }
+      94% { opacity: 1; }
+      95% { opacity: 0.9; }
+      96% { opacity: 1; }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50% { transform: rotate(45deg) translateY(10px); }
+    }
+    
+    @keyframes shine {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    
+    /* Glitch effect for text */
+    .glitch {
+      position: relative;
+    }
+    
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .glitch::before {
+      color: #ff0000;
+      animation: glitch-1 2s infinite linear;
+      clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+    }
+    
+    .glitch::after {
+      color: #00ffff;
+      animation: glitch-2 3s infinite linear;
+      clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+    }
+    
+    @keyframes glitch-1 {
+      0%, 100% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+    }
+    
+    @keyframes glitch-2 {
+      0%, 100% { transform: translate(0); }
+      20% { transform: translate(2px, -2px); }
+      40% { transform: translate(2px, 2px); }
+      60% { transform: translate(-2px, -2px); }
+      80% { transform: translate(-2px, 2px); }
+    }
+  </style>
+</head>
+<body>
+  <div id="canvas-container"></div>
+  
+  <div class="content">
+    <!-- Landing Section -->
+    <section class="landing">
+      <h1 class="title" data-text="PROJECT: INITIAL CONTACT">PROJECT: INITIAL CONTACT</h1>
+      <p class="subtitle">THEY AMONG US SINCE 1947</p>
+      <div class="scroll-hint" onclick="scrollToSection('truth')">
+        <span>DISCOVER THE TRUTH</span>
+        <div class="scroll-arrow"></div>
+      </div>
+    </section>
+    
+    <!-- The Truth Section -->
+    <section class="truth-section" id="truth">
+      <h2 class="section-title">◈ THE COINS ◈</h2>
+      <div class="coins-container">
+        <div class="coin" onclick="revealSecret(0)">
+          <span class="coin-symbol">⟁</span>
+          <span class="coin-label">GREY</span>
+        </div>
+        <div class="coin" onclick="revealSecret(1)">
+          <span class="coin-symbol">⟠</span>
+          <span class="coin-label">REPTILIAN</span>
+        </div>
+        <div class="coin" onclick="revealSecret(2)">
+          <span class="coin-symbol">⟡</span>
+          <span class="coin-label">NORDIC</span>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Messages Section -->
+    <section class="messages-section" id="messages">
+      <h2 class="section-title">◈ INCOMING TRANSMISSIONS ◈</h2>
+      <div class="transmission">
+        <p class="transmission-text" id="transmission-text"></p>
+        <div class="decoded" id="decoded-message"></div>
+      </div>
+    </section>
+    
+    <!-- Join Section -->
+    <section class="join-section" id="join">
+      <h2 class="section-title">◈ ANSWER THE CALL ◈</h2>
+      <p style="margin-bottom: 2rem; color: #808080; max-width: 500px;">
+        The truth is out there. Join the awakened. 
+        <br>They are watching. They are waiting.
+      </p>
+      <button class="cta-button" onclick="initiateContact()">INITIATE CONTACT</button>
+    </section>
+  </div>
+
+  <script>
+    // p5.js sketch for starfield and UFO
+    let stars = [];
+    let ufoY = -100;
+    let beamOpacity = 0;
+    let beamActive = false;
+    
+    function setup() {
+      let canvas = createCanvas(windowWidth, windowHeight);
+      canvas.parent('canvas-container');
+      
+      // Create stars
+      for (let i = 0; i < 300; i++) {
+        stars.push({
+          x: random(width),
+          y: random(height),
+          size: random(0.5, 2.5),
+          brightness: random(100, 255),
+          twinkleSpeed: random(0.01, 0.05)
+        });
+      }
+      
+      // Trigger UFO landing after 2 seconds
+      setTimeout(() => {
+        beamActive = true;
+      }, 2000);
+    }
+    
+    function draw() {
+      // Dark cosmic background
+      background(5, 5, 15);
+      
+      // Draw nebula effect
+      drawNebula();
+      
+      // Draw stars
+      drawStars();
+      
+      // Draw UFO beam
+      if (beamActive && beamOpacity < 255) {
+        beamOpacity += 2;
+      }
+      
+      if (beamOpacity > 0) {
+        drawBeam();
+      }
+      
+      // Draw UFO
+      drawUFO();
+      
+      // Animate UFO descent
+      if (beamActive && ufoY < height * 0.35) {
+        ufoY += 1.5;
+      }
+    }
+    
+    function drawNebula() {
+      noStroke();
+      for (let i = 0; i < 5; i++) {
+        let x = width * (0.2 + i * 0.15);
+        let y = height * (0.3 + sin(frameCount * 0.001 + i) * 0.1);
+        let size = 200 + sin(frameCount * 0.002 + i * 2) * 50;
+        
+        let c = color(30 + i * 10, 20, 50 + i * 15, 30);
+        fill(c);
+        ellipse(x, y, size, size * 0.6);
+      }
+    }
+    
+    function drawStars() {
+      noStroke();
+      for (let star of stars) {
+        let brightness = star.brightness + sin(frameCount * star.twinkleSpeed) * 50;
+        fill(255, 255, 255, brightness);
+        ellipse(star.x, star.y, star.size);
+      }
+    }
+    
+    function drawBeam() {
+      let centerX = width / 2;
+      let beamWidth = 150;
+      
+      // Outer glow
+      for (let i = 5; i > 0; i--) {
+        fill(100, 200, 255, (beamOpacity / 5) * (1 / i));
+        triangle(
+          centerX - beamWidth * i, ufoY + 50,
+          centerX + beamWidth * i, ufoY + 50,
+          centerX, height
+        );
+      }
+      
+      // Core beam
+      fill(150, 220, 255, beamOpacity * 0.5);
+      triangle(
+        centerX - beamWidth * 0.3, ufoY + 50,
+        centerX + beamWidth * 0.3, ufoY + 50,
+        centerX, height
+      );
+    }
+    
+    function drawUFO() {
+      push();
+      translate(width / 2, ufoY);
+      
+      // UFO body
+      noStroke();
+      
+      // Dome
+      fill(100, 150, 200, 200);
+      ellipse(0, -10, 60, 40);
+      
+      // Body
+      fill(80, 80, 90);
+      ellipse(0, 10, 120, 30);
+      
+      // Ring
+      fill(120, 120, 140);
+      ellipse(0, 10, 140, 15);
+      
+      // Lights
+      for (let i = 0; i < 5; i++) {
+        let lightX = -50 + i * 25;
+        let lightY = 15 + sin(frameCount * 0.1 + i) * 3;
+        let alpha = 150 + sin(frameCount * 0.15 + i * 2) * 100;
+        fill(255, 255, 200, alpha);
+        ellipse(lightX, lightY, 8, 5);
+      }
+      
+      pop();
+    }
+    
+    function windowResized() {
+      resizeCanvas(windowWidth, windowHeight);
+    }
+    
+    // Scroll function
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Coin secrets
+    const secrets = [
+      "Grey beings. 4 feet tall. Large obsidian eyes. They came in peace.",
+      "Ancient bloodline. Reptilian consciousness. Shapeshifters among us.",
+      "The Nordic alliance. Blonde hair. Blue eyes. Watching humanity evolve."
+    ];
+    
+    function revealSecret(index) {
+      const messages = document.getElementById('messages');
+      messages.scrollIntoView({ behavior: 'smooth' });
+      typeTransmission(secrets[index]);
+    }
+    
+    // Transmission effect
+    const alienChars = '⟁⟠⟡◈▣▤▥▦▧▨▩▪▫◉◎◇◆□■△▽⊗⊕⊖⊘⊙○●◐◑◒◓';
+    
+    function typeTransmission(text) {
+      const textEl = document.getElementById('transmission-text');
+      const decodedEl = document.getElementById('decoded-message');
+      textEl.innerHTML = '';
+      decodedEl.innerHTML = '';
+      
+      let i = 0;
+      let charIndex = 0;
+      
+      function type() {
+        if (i < text.length) {
+          // Mix in alien characters
+          let char = text[i];
+          if (Math.random() > 0.7) {
+            char = alienChars[Math.floor(Math.random() * alienChars.length)];
+          }
+          textEl.innerHTML += char;
+          i++;
+          charIndex++;
+          
+          // Add glitch effect occasionally
+          if (Math.random() > 0.9) {
+            textEl.style.animation = 'blink 0.1s';
+            setTimeout(() => textEl.style.animation = '', 100);
+          }
+          
+          setTimeout(type, 50 + Math.random() * 100);
+        } else {
+          // Show decoded message
+          setTimeout(() => {
+            decodedEl.innerHTML = `<strong>DECODED:</strong> ${text}`;
+          }, 500);
+        }
+      }
+      
+      type();
+    }
+    
+    // CTA button
+    function initiateContact() {
+      alert('TRANSMISSION SENT. THEY ARE WATCHING.');
+    }
+    
+    // Initialize first transmission on load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        typeTransmission('ALLIANCE ESTABLISHED IN 1947. THEY WALK AMONG US. THE COINS HOLD THEIR HISTORY.');
+      }, 3000);
+    });
+  </script>
+</body>
+</html>

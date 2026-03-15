@@ -518,6 +518,7 @@
     </footer>
     
     <canvas class="glyph-overlay" id="glyphCanvas"></canvas>
+    <canvas id="dustCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;"></canvas>
 
     <script>
         // Star field and UFO p5.js sketch
@@ -530,6 +531,51 @@
         // Glyph canvas for ambient symbols
         const glyphCanvas = document.getElementById('glyphCanvas');
         const gCtx = glyphCanvas.getContext('2d');
+        
+        // Cosmic dust particle system
+        const dustCanvas = document.getElementById('dustCanvas');
+        const dCtx = dustCanvas.getContext('2d');
+        let dustParticles = [];
+        
+        function resizeDustCanvas() {
+            dustCanvas.width = window.innerWidth;
+            dustCanvas.height = window.innerHeight;
+        }
+        resizeDustCanvas();
+        window.addEventListener('resize', resizeDustCanvas);
+        
+        // Init dust particles
+        for (let i = 0; i < 80; i++) {
+            dustParticles.push({
+                x: Math.random() * dustCanvas.width,
+                y: Math.random() * dustCanvas.height,
+                size: Math.random() * 2 + 0.5,
+                speedX: (Math.random() - 0.5) * 0.3,
+                speedY: (Math.random() - 0.5) * 0.3,
+                opacity: Math.random() * 0.5 + 0.1
+            });
+        }
+        
+        function drawDust() {
+            dCtx.clearRect(0, 0, dustCanvas.width, dustCanvas.height);
+            for (let p of dustParticles) {
+                p.x += p.speedX;
+                p.y += p.speedY;
+                
+                // Wrap around
+                if (p.x < 0) p.x = dustCanvas.width;
+                if (p.x > dustCanvas.width) p.x = 0;
+                if (p.y < 0) p.y = dustCanvas.height;
+                if (p.y > dustCanvas.height) p.y = 0;
+                
+                dCtx.beginPath();
+                dCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                dCtx.fillStyle = `rgba(200, 220, 255, ${p.opacity})`;
+                dCtx.fill();
+            }
+            requestAnimationFrame(drawDust);
+        }
+        drawDust();
         
         function resizeGlyphCanvas() {
             glyphCanvas.width = window.innerWidth;

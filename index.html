@@ -1,697 +1,743 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALIEN COIN | The Truth Is Out There</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    :root {
-      --silver: #c0c0c0;
-      --silver-light: #e8e8e8;
-      --silver-dark: #808080;
-      --alien-green: #00ff88;
-      --cosmic-purple: #8b5cf6;
-      --void-black: #0a0a0f;
-    }
-    
-    body {
-      background: var(--void-black);
-      color: var(--silver);
-      font-family: 'Rajdhani', sans-serif;
-      overflow-x: hidden;
-    }
-    
-    #p5-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 0;
-    }
-    
-    .content {
-      position: relative;
-      z-index: 1;
-      min-height: 100vh;
-    }
-    
-    /* Landing Section */
-    .landing {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 2rem;
-    }
-    
-    .title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(2rem, 8vw, 6rem);
-      font-weight: 900;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      background: linear-gradient(180deg, var(--silver-light) 0%, var(--silver) 50%, var(--silver-dark) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-shadow: 0 0 60px rgba(192, 192, 192, 0.5);
-      animation: titleGlow 3s ease-in-out infinite;
-    }
-    
-    @keyframes titleGlow {
-      0%, 100% { filter: drop-shadow(0 0 20px rgba(192, 192, 192, 0.3)); }
-      50% { filter: drop-shadow(0 0 40px rgba(192, 192, 192, 0.6)); }
-    }
-    
-    .subtitle {
-      font-size: clamp(1rem, 3vw, 1.5rem);
-      letter-spacing: 0.5em;
-      margin-top: 1rem;
-      color: var(--alien-green);
-      opacity: 0;
-      animation: fadeIn 2s ease-out 1s forwards;
-    }
-    
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-    
-    .scroll-hint {
-      position: absolute;
-      bottom: 3rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      opacity: 0;
-      animation: fadeIn 2s ease-out 2s forwards;
-      cursor: pointer;
-    }
-    
-    .scroll-hint span {
-      font-size: 0.8rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-    }
-    
-    .scroll-arrow {
-      width: 20px;
-      height: 20px;
-      border-right: 2px solid var(--alien-green);
-      border-bottom: 2px solid var(--alien-green);
-      transform: rotate(45deg);
-      animation: bounce 2s ease-in-out infinite;
-    }
-    
-    @keyframes bounce {
-      0%, 100% { transform: rotate(45deg) translateY(0); }
-      50% { transform: rotate(45deg) translateY(10px); }
-    }
-    
-    /* Navigation */
-    nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      padding: 1.5rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 100;
-      background: linear-gradient(180deg, rgba(10,10,15,0.9) 0%, transparent 100%);
-    }
-    
-    .nav-logo {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.2rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-    }
-    
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
-    
-    .nav-links a {
-      color: var(--silver);
-      text-decoration: none;
-      font-size: 0.9rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      transition: color 0.3s, text-shadow 0.3s;
-    }
-    
-    .nav-links a:hover {
-      color: var(--alien-green);
-      text-shadow: 0 0 10px var(--alien-green);
-    }
-    
-    /* Coins Section */
-    .coins-section {
-      min-height: 100vh;
-      padding: 6rem 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    .section-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1.5rem, 5vw, 3rem);
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      margin-bottom: 3rem;
-      text-align: center;
-    }
-    
-    .coins-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 3rem;
-      max-width: 1200px;
-      width: 100%;
-    }
-    
-    .coin-card {
-      position: relative;
-      aspect-ratio: 1;
-      cursor: pointer;
-      transform-style: preserve-3d;
-      transition: transform 0.6s;
-    }
-    
-    .coin-card:hover {
-      transform: rotateY(180deg) scale(1.05);
-    }
-    
-    .coin-face {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      backface-visibility: hidden;
-      border: 4px solid var(--silver);
-      box-shadow: 
-        0 0 30px rgba(192, 192, 192, 0.3),
-        inset 0 0 60px rgba(192, 192, 192, 0.1);
-    }
-    
-    .coin-front {
-      background: radial-gradient(circle at 30% 30%, var(--silver-light), var(--silver) 40%, var(--silver-dark));
-    }
-    
-    .coin-back {
-      background: radial-gradient(circle at 30% 30%, #1a1a2e, #0a0a1a);
-      border-color: var(--alien-green);
-      transform: rotateY(180deg);
-    }
-    
-    .coin-symbol {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-    }
-    
-    .coin-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1rem;
-      letter-spacing: 0.1em;
-      color: var(--void-black);
-    }
-    
-    .coin-back .coin-symbol {
-      color: var(--alien-green);
-      text-shadow: 0 0 20px var(--alien-green);
-    }
-    
-    .coin-back .coin-title {
-      color: var(--alien-green);
-      font-size: 0.8rem;
-    }
-    
-    .coin-glyph {
-      position: absolute;
-      font-family: 'Orbitron', sans-serif;
-      color: var(--silver-dark);
-      font-size: 0.7rem;
-      letter-spacing: 0.1em;
-    }
-    
-    .coin-glyph.tl { top: 15%; left: 20%; }
-    .coin-glyph.tr { top: 15%; right: 20%; }
-    .coin-glyph.bl { bottom: 15%; left: 20%; }
-    .coin-glyph.br { bottom: 15%; right: 20%; }
-    
-    /* Messages Section */
-    .messages-section {
-      min-height: 100vh;
-      padding: 6rem 2rem;
-      background: linear-gradient(180deg, transparent 0%, rgba(0, 255, 136, 0.02) 50%, transparent 100%);
-    }
-    
-    .transmission {
-      max-width: 800px;
-      margin: 0 auto 2rem;
-      padding: 2rem;
-      border: 1px solid var(--alien-green);
-      background: rgba(0, 255, 136, 0.03);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .transmission::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
-      animation: scan 3s linear infinite;
-    }
-    
-    @keyframes scan {
-      to { left: 100%; }
-    }
-    
-    .transmission-header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid rgba(0, 255, 136, 0.3);
-    }
-    
-    .signal-indicator {
-      width: 12px;
-      height: 12px;
-      background: var(--alien-green);
-      border-radius: 50%;
-      animation: pulse 1s ease-in-out infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--alien-green); }
-      50% { opacity: 0.5; box-shadow: 0 0 5px var(--alien-green); }
-    }
-    
-    .transmission-source {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.8rem;
-      letter-spacing: 0.2em;
-      color: var(--alien-green);
-    }
-    
-    .transmission-content {
-      font-size: 1.1rem;
-      line-height: 1.8;
-      color: var(--silver);
-    }
-    
-    .transmission-glyph {
-      position: absolute;
-      font-size: 8rem;
-      opacity: 0.05;
-      color: var(--alien-green);
-    }
-    
-    /* Join Section */
-    .join-section {
-      min-height: 60vh;
-      padding: 6rem 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-    
-    .cta-button {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.2rem;
-      letter-spacing: 0.3em;
-      padding: 1.5rem 3rem;
-      background: transparent;
-      border: 2px solid var(--alien-green);
-      color: var(--alien-green);
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s;
-    }
-    
-    .cta-button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: var(--alien-green);
-      transition: left 0.3s;
-      z-index: -1;
-    }
-    
-    .cta-button:hover {
-      color: var(--void-black);
-    }
-    
-    .cta-button:hover::before {
-      left: 0;
-    }
-    
-    footer {
-      padding: 2rem;
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--silver-dark);
-      letter-spacing: 0.1em;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALIEN COIN | The Truth Is Here</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            color: #c0c0c0;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+        
+        .content > * {
+            pointer-events: auto;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 2rem;
+            animation: fadeIn 2s ease-out;
+        }
+        
+        .hero h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 900;
+            letter-spacing: 0.3em;
+            color: #e0e0e0;
+            text-shadow: 
+                0 0 10px rgba(192, 192, 192, 0.8),
+                0 0 30px rgba(192, 192, 192, 0.5),
+                0 0 60px rgba(100, 200, 255, 0.3);
+            margin-bottom: 0.5rem;
+        }
+        
+        .hero .subtitle {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            letter-spacing: 0.5em;
+            color: #808080;
+            text-transform: uppercase;
+        }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+        
+        .scroll-indicator span {
+            display: block;
+            font-size: 0.8rem;
+            letter-spacing: 0.3em;
+            color: #606060;
+            margin-bottom: 0.5rem;
+        }
+        
+        .scroll-indicator .arrow {
+            width: 20px;
+            height: 20px;
+            border-right: 2px solid #c0c0c0;
+            border-bottom: 2px solid #c0c0c0;
+            transform: rotate(45deg);
+            margin: 0 auto;
+            animation: bounce 2s infinite;
+        }
+        
+        .navigation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+        }
+        
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #c0c0c0;
+            letter-spacing: 0.2em;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: #808080;
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #c0c0c0;
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #c0c0c0;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(45deg); }
+            40% { transform: translateY(10px) rotate(45deg); }
+            60% { transform: translateY(5px) rotate(45deg); }
+        }
+        
+        .glyph-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.1;
+        }
+        
+        /* Section: The Truth - Coins */
+        .section {
+            min-height: 100vh;
+            padding: 6rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            color: #e0e0e0;
+            text-shadow: 0 0 30px rgba(192, 192, 192, 0.5);
+            margin-bottom: 3rem;
+            text-align: center;
+            letter-spacing: 0.2em;
+        }
+        
+        .coins-container {
+            display: flex;
+            gap: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1200px;
+        }
+        
+        .coin {
+            width: 280px;
+            height: 280px;
+            position: relative;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        
+        .coin:hover, .coin.flipped {
+            transform: rotateY(180deg) scale(1.05);
+        }
+        
+        .coin-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 0 30px rgba(192, 192, 192, 0.3),
+                inset 0 0 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        .coin-front {
+            background: linear-gradient(145deg, #e8e8e8 0%, #a0a0a0 50%, #d0d0d0 100%);
+            border: 4px solid #c0c0c0;
+        }
+        
+        .coin-back {
+            background: linear-gradient(145deg, #1a1a2e 0%, #0a0a15 100%);
+            border: 4px solid #303050;
+            transform: rotateY(180deg);
+            color: #808090;
+            font-size: 0.9rem;
+            padding: 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .coin-symbol {
+            font-size: 6rem;
+            color: #404050;
+            text-shadow: 0 0 20px rgba(150, 180, 255, 0.5);
+        }
+        
+        .coin-glyph {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            color: #606080;
+            margin-bottom: 1rem;
+        }
+        
+        .coin-message {
+            line-height: 1.6;
+            font-size: 0.85rem;
+        }
+        
+        .coin-label {
+            position: absolute;
+            bottom: -2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Orbitron', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            color: #606060;
+            white-space: nowrap;
+        }
+        
+        /* Messages Section */
+        .messages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            width: 100%;
+        }
+        
+        .message-card {
+            background: linear-gradient(145deg, rgba(20, 20, 40, 0.8), rgba(10, 10, 25, 0.9));
+            border: 1px solid rgba(100, 120, 180, 0.3);
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .message-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(150, 180, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .message-card:hover::before {
+            left: 100%;
+        }
+        
+        .message-card:hover {
+            border-color: rgba(150, 180, 255, 0.6);
+            box-shadow: 0 0 30px rgba(100, 150, 255, 0.2);
+        }
+        
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .message-icon {
+            font-size: 2rem;
+        }
+        
+        .message-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1rem;
+            color: #a0b0d0;
+            letter-spacing: 0.1em;
+        }
+        
+        .message-preview {
+            color: #606080;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        /* Join Section */
+        .join-container {
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        .join-text {
+            font-size: 1.2rem;
+            color: #808090;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        
+        .cta-button {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            padding: 1rem 3rem;
+            background: transparent;
+            border: 2px solid #c0c0c0;
+            color: #c0c0c0;
+            cursor: pointer;
+            letter-spacing: 0.2em;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(192, 192, 192, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .cta-button:hover {
+            background: rgba(192, 192, 192, 0.1);
+            box-shadow: 0 0 30px rgba(150, 180, 255, 0.3);
+        }
+        
+        .cta-button:hover::before {
+            left: 100%;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            color: #404050;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+        }
+    </style>
 </head>
 <body>
-  <div id="p5-canvas"></div>
-  
-  <div class="content">
-    <nav>
-      <div class="nav-logo">◇ A.C. ◇</div>
-      <ul class="nav-links">
-        <li><a href="#landing">Home</a></li>
-        <li><a href="#coins">Coins</a></li>
-        <li><a href="#messages">Messages</a></li>
-        <li><a href="#join">Join</a></li>
-      </ul>
+    <div id="canvas-container"></div>
+    
+    <nav class="navigation">
+        <div class="logo">⬡ ALIEN COIN</div>
+        <ul class="nav-links">
+            <li><a href="#landing">Home</a></li>
+            <li><a href="#truth">The Truth</a></li>
+            <li><a href="#messages">Messages</a></li>
+            <li><a href="#join">Join Us</a></li>
+        </ul>
     </nav>
     
-    <section id="landing" class="landing">
-      <h1 class="title">Alien Coin</h1>
-      <p class="subtitle">THE TRUTH IS OUT THERE</p>
-      <div class="scroll-hint" onclick="document.getElementById('coins').scrollIntoView({behavior: 'smooth'})">
-        <span>Discover</span>
-        <div class="scroll-arrow"></div>
-      </div>
-    </section>
-    
-    <section id="coins" class="coins-section">
-      <h2 class="section-title">◈ THE TRUTH ◈</h2>
-      <div class="coins-grid">
-        <div class="coin-card">
-          <div class="coin-face coin-front">
-            <span class="coin-glyph tl">Ω</span>
-            <span class="coin-glyph tr">Ψ</span>
-            <span class="coin-glyph bl">Σ</span>
-            <span class="coin-glyph br">Δ</span>
-            <div class="coin-symbol">👽</div>
-            <div class="coin-title">GREY</div>
-          </div>
-          <div class="coin-face coin-back">
-            <div class="coin-symbol">◈</div>
-            <div class="coin-title">CLASSIFIED</div>
-          </div>
-        </div>
+    <div class="content">
+        <section class="hero" id="landing">
+            <h1>ALIEN COIN</h1>
+            <p class="subtitle">The truth is here</p>
+        </section>
         
-        <div class="coin-card">
-          <div class="coin-face coin-front">
-            <span class="coin-glyph tl">Ξ</span>
-            <span class="coin-glyph tr">Φ</span>
-            <span class="coin-glyph bl">Γ</span>
-            <span class="coin-glyph br">Λ</span>
-            <div class="coin-symbol">🛸</div>
-            <div class="coin-title">REPTILIAN</div>
-          </div>
-          <div class="coin-face coin-back">
-            <div class="coin-symbol">◇</div>
-            <div class="coin-title">DECLASSIFIED</div>
-          </div>
+        <div class="scroll-indicator">
+            <span>SCROLL TO DESCEND</span>
+            <div class="arrow"></div>
         </div>
-        
-        <div class="coin-card">
-          <div class="coin-face coin-front">
-            <span class="coin-glyph tl">Θ</span>
-            <span class="coin-glyph tr">Π</span>
-            <span class="coin-glyph bl">Ω</span>
-            <span class="coin-glyph br">Ψ</span>
-            <div class="coin-symbol">🌌</div>
-            <div class="coin-title">PLEIADIAN</div>
-          </div>
-          <div class="coin-face coin-back">
-            <div class="coin-symbol">✧</div>
-            <div class="coin-title">AUTHORIZED</div>
-          </div>
+    </div>
+    
+    <!-- SECTION: THE TRUTH - Silver Coins -->
+    <section class="section" id="truth">
+        <h2 class="section-title">THE TRUTH</h2>
+        <div class="coins-container">
+            <div class="coin">
+                <div class="coin-face coin-front">
+                    <div class="coin-symbol">⬡</div>
+                </div>
+                <div class="coin-face coin-back">
+                    <div class="coin-glyph">⟁</div>
+                    <p class="coin-message">They came in peace.<br>They left their currency.<br>We found it.</p>
+                </div>
+                <div class="coin-label">GREY COIN</div>
+            </div>
+            
+            <div class="coin">
+                <div class="coin-face coin-front">
+                    <div class="coin-symbol">◎</div>
+                </div>
+                <div class="coin-face coin-back">
+                    <div class="coin-glyph">⟡</div>
+                    <p class="coin-message">1947. Roswell.<br>The recovery was real.<br>The coverup: eternal.</p>
+                </div>
+                <div class="coin-label">ROSWELL COIN</div>
+            </div>
+            
+            <div class="coin">
+                <div class="coin-face coin-front">
+                    <div class="coin-symbol">◈</div>
+                </div>
+                <div class="coin-face coin-back">
+                    <div class="coin-glyph">⌬</div>
+                    <p class="coin-message">Area 51 holds more<br>than aircraft.<br>Currency of the cosmos.</p>
+                </div>
+                <div class="coin-label">AREA 51 COIN</div>
+            </div>
         </div>
-      </div>
     </section>
     
-    <section id="messages" class="messages-section">
-      <h2 class="section-title">◈ DECODED TRANSMISSIONS ◈</h2>
-      
-      <div class="transmission">
-        <span class="transmission-glyph">◈</span>
-        <div class="transmission-header">
-          <div class="signal-indicator"></div>
-          <span class="transmission-source">SOURCE: NEBULA-7X</span>
+    <!-- SECTION: MESSAGES -->
+    <section class="section" id="messages">
+        <h2 class="section-title">MESSAGES</h2>
+        <div class="messages-grid">
+            <div class="message-card">
+                <div class="message-header">
+                    <span class="message-icon">◉</span>
+                    <span class="message-title">TRANSMISSION 001</span>
+                </div>
+                <p class="message-preview">We are not your enemies. Your leaders know the truth. The coins are proof we were here...</p>
+            </div>
+            
+            <div class="message-card">
+                <div class="message-header">
+                    <span class="message-icon">◈</span>
+                    <span class="message-title">TRANSMISSION 002</span>
+                </div>
+                <p class="message-preview">The gold you seek is common. Our silver carries consciousness across dimensions...</p>
+            </div>
+            
+            <div class="message-card">
+                <div class="message-header">
+                    <span class="message-icon">⬡</span>
+                    <span class="message-title">TRANSMISSION 003</span>
+                </div>
+                <p class="message-preview">Collect the coins. When the mothership returns, only bearers will be recognized...</p>
+            </div>
         </div>
-        <p class="transmission-content">
-          The coins bear our mark. Each one a key. Each one a promise. 
-          When the silver moon aligns with the triple star, the gateway opens.
-          Collect. Wait. Be ready.
-        </p>
-      </div>
-      
-      <div class="transmission">
-        <span class="transmission-glyph">◇</span>
-        <div class="transmission-header">
-          <div class="signal-indicator"></div>
-          <span class="transmission-source">SOURCE: SECTOR 9</span>
-        </div>
-        <p class="transmission-content">
-          We came before. We will come again. The coins are our calling card.
-          Those who hold them... we remember. Those who believe... we watch.
-        </p>
-      </div>
-      
-      <div class="transmission">
-        <span class="transmission-glyph">✧</span>
-        <div class="transmission-header">
-          <div class="signal-indicator"></div>
-          <span class="transmission-source">SOURCE: UNKNOWN ORIGIN</span>
-        </div>
-        <p class="transmission-content">
-          The simulation is breaking down. Soon you will see the seams.
-          Hold tight to your silver. It is more than metal. It is identity.
-          It is proof that you are one of us.
-        </p>
-      </div>
     </section>
     
-    <section id="join" class="join-section">
-      <h2 class="section-title">◈ JOIN THE AWAKENING ◈</h2>
-      <p style="margin-bottom: 2rem; max-width: 500px; line-height: 1.8;">
-        The first wave is coming. Our representatives will make contact.
-        Enter your designation below to receive encrypted coordinates.
-      </p>
-      <button class="cta-button">RECEIVE TRANSMISSION</button>
+    <!-- SECTION: JOIN US -->
+    <section class="section" id="join">
+        <h2 class="section-title">JOIN US</h2>
+        <div class="join-container">
+            <p class="join-text">
+                The truth is out there. <br>
+                The coins are here. <br>
+                Your journey begins now.
+            </p>
+            <button class="cta-button">RECEIVE THE SIGNAL</button>
+        </div>
     </section>
     
     <footer>
-      <p>◈ ALL RIGHTS RESERVED ◈ THE TRUTH IS OUT THERE ◈</p>
+        © 1947-2026 ALIEN COIN PROJECT | CLASSIFIED
     </footer>
-  </div>
+    
+    <canvas class="glyph-overlay" id="glyphCanvas"></canvas>
 
-  <script>
-    // p5.js Starfield & UFO Background
-    let stars = [];
-    let ufoY;
-    let beamOpacity = 0;
-    let beamDirection = 1;
-    
-    function setup() {
-      let canvas = createCanvas(windowWidth, windowHeight);
-      canvas.parent('p5-canvas');
-      
-      // Create starfield
-      for (let i = 0; i < 300; i++) {
-        stars.push({
-          x: random(width),
-          y: random(height),
-          size: random(0.5, 3),
-          brightness: random(100, 255),
-          twinkleSpeed: random(0.01, 0.05)
-        });
-      }
-      
-      ufoY = height * 0.35;
-    }
-    
-    function draw() {
-      background(10, 10, 15);
-      
-      // Draw stars
-      for (let star of stars) {
-        let alpha = sin(frameCount * star.twinkleSpeed) * 50 + star.brightness;
-        fill(200, 220, 255, alpha);
-        noStroke();
-        ellipse(star.x, star.y, star.size);
-      }
-      
-      // Draw nebula clouds
-      drawNebula();
-      
-      // Draw UFO
-      drawUFO(width / 2, ufoY);
-      
-      // Draw beam
-      if (ufoY > height * 0.25) {
-        drawBeam(width / 2, ufoY + 40);
-      }
-      
-      // Animate UFO
-      ufoY += sin(frameCount * 0.02) * 0.3;
-    }
-    
-    function drawNebula() {
-      // Purple nebula
-      push();
-      for (let i = 0; i < 5; i++) {
-        let x = width * (0.2 + i * 0.15);
-        let y = height * (0.3 + sin(frameCount * 0.001 + i) * 0.1);
-        let size = 200 + sin(frameCount * 0.01 + i * 2) * 50;
+    <script>
+        // Star field and UFO p5.js sketch
+        let stars = [];
+        let ufoY = -200;
+        let targetUfoY;
+        let beamOpacity = 0;
+        let time = 0;
         
-        let c = color(139, 92, 246, 15);
-        fill(c);
-        noStroke();
-        ellipse(x, y, size, size * 0.6);
-      }
-      pop();
-      
-      // Green glow
-      push();
-      for (let i = 0; i < 3; i++) {
-        let x = width * (0.3 + i * 0.2);
-        let y = height * (0.7 + cos(frameCount * 0.008 + i) * 0.05);
+        // Glyph canvas for ambient symbols
+        const glyphCanvas = document.getElementById('glyphCanvas');
+        const gCtx = glyphCanvas.getContext('2d');
         
-        let c = color(0, 255, 136, 8);
-        fill(c);
-        ellipse(x, y, 150, 100);
-      }
-      pop();
-    }
-    
-    function drawUFO(x, y) {
-      push();
-      
-      // UFO body
-      fill(80, 80, 90);
-      stroke(120, 120, 130);
-      strokeWeight(2);
-      ellipse(x, y, 120, 40);
-      
-      // Dome
-      fill(100, 150, 200, 150);
-      noStroke();
-      ellipse(x, y - 15, 50, 35);
-      
-      // Lights
-      for (let i = 0; i < 8; i++) {
-        let angle = PI + (TWO_PI / 8) * i;
-        let lx = x + cos(angle) * 50;
-        let ly = y + sin(angle) * 15;
-        
-        let blink = sin(frameCount * 0.2 + i) > 0;
-        fill(blink ? color(0, 255, 136) : color(100, 100, 100));
-        ellipse(lx, ly, 6, 4);
-      }
-      
-      // Glow underneath
-      fill(0, 255, 136, 30);
-      ellipse(x, y + 20, 80, 30);
-      
-      pop();
-    }
-    
-    function drawBeam(x, y) {
-      push();
-      
-      beamOpacity += beamDirection * 2;
-      if (beamOpacity > 80) beamDirection = -1;
-      if (beamOpacity < 20) beamDirection = 1;
-      
-      // Multiple beam layers
-      for (let i = 0; i < 5; i++) {
-        let alpha = beamOpacity - i * 15;
-        if (alpha > 0) {
-          fill(0, 255, 136, alpha * 0.3);
-          noStroke();
-          
-          beginShape();
-          vertex(x - 60 + i * 5, y);
-          vertex(x + 60 - i * 5, y);
-          vertex(x + 150 - i * 20, height);
-          vertex(x - 150 + i * 20, height);
-          endShape(CLOSE);
+        function resizeGlyphCanvas() {
+            glyphCanvas.width = window.innerWidth;
+            glyphCanvas.height = window.innerHeight;
         }
-      }
-      
-      // Core beam
-      fill(200, 255, 220, beamOpacity * 0.5);
-      beginShape();
-      vertex(x - 30, y);
-      vertex(x + 30, y);
-      vertex(x + 60, height);
-      vertex(x - 60, height);
-      endShape(CLOSE);
-      
-      pop();
-    }
-    
-    function windowResized() {
-      resizeCanvas(windowWidth, windowHeight);
-    }
-    
-    // Mouse interaction with alien glyphs
-    let glyphs = [];
-    
-    function mouseMoved() {
-      // Add subtle particle effect on mouse move
-      if (random() > 0.7) {
-        glyphs.push({
-          x: mouseX,
-          y: mouseY,
-          life: 60,
-          symbol: random(['◈', '◇', '✧', 'Ω', 'Ψ'])
+        resizeGlyphCanvas();
+        window.addEventListener('resize', resizeGlyphCanvas);
+        
+        function drawGlyphs() {
+            gCtx.clearRect(0, 0, glyphCanvas.width, glyphCanvas.height);
+            const glyphs = ['◬', '◇', '△', '⬡', '◎', '▽', '◈', '⬢'];
+            gCtx.font = '20px Orbitron';
+            gCtx.fillStyle = 'rgba(192, 192, 192, 0.1)';
+            
+            for (let i = 0; i < 20; i++) {
+                const x = (Math.sin(time * 0.0001 + i * 0.5) * 0.5 + 0.5) * glyphCanvas.width;
+                const y = (Math.cos(time * 0.00015 + i * 0.7) * 0.5 + 0.5) * glyphCanvas.height;
+                gCtx.fillText(glyphs[i % glyphs.length], x, y);
+            }
+        }
+        
+        // p5.js sketch
+        function setup() {
+            const canvas = createCanvas(windowWidth, windowHeight);
+            canvas.parent('canvas-container');
+            
+            targetUfoY = height * 0.35;
+            
+            // Create stars
+            for (let i = 0; i < 300; i++) {
+                stars.push({
+                    x: random(width),
+                    y: random(height),
+                    size: random(0.5, 3),
+                    brightness: random(100, 255),
+                    twinkleSpeed: random(0.01, 0.05)
+                });
+            }
+        }
+        
+        function draw() {
+            background(5, 5, 15);
+            time = millis();
+            
+            // Draw nebula effect
+            drawNebula();
+            
+            // Draw stars
+            drawStars();
+            
+            // Draw beam
+            drawBeam();
+            
+            // Draw UFO
+            drawUFO();
+            
+            // Update UFO position
+            ufoY = lerp(ufoY, targetUfoY, 0.02);
+            beamOpacity = lerp(beamOpacity, 1, 0.02);
+            
+            // Draw glyphs
+            drawGlyphs();
+        }
+        
+        function drawNebula() {
+            noStroke();
+            for (let i = 0; i < 5; i++) {
+                const x = width * (0.2 + i * 0.15);
+                const y = height * 0.3;
+                const size = 300 + sin(time * 0.0005 + i) * 50;
+                
+                const gradient = drawingContext.createRadialGradient(x, y, 0, x, y, size);
+                gradient.addColorStop(0, `rgba(100, 150, 200, ${0.03 + sin(time * 0.001 + i) * 0.01})`);
+                gradient.addColorStop(0.5, 'rgba(50, 50, 100, 0.02)');
+                gradient.addColorStop(1, 'transparent');
+                
+                drawingContext.fillStyle = gradient;
+                ellipse(x, y, size * 2);
+            }
+        }
+        
+        function drawStars() {
+            for (let star of stars) {
+                const twinkle = sin(time * star.twinkleSpeed) * 50 + star.brightness;
+                fill(200, 210, 255, twinkle);
+                noStroke();
+                ellipse(star.x, star.y, star.size);
+            }
+        }
+        
+        function drawBeam() {
+            const beamWidth = 120;
+            const centerX = width / 2;
+            
+            noStroke();
+            for (let i = 0; i < 30; i++) {
+                const alpha = map(i, 0, 30, 80, 0) * beamOpacity;
+                const w = map(i, 0, 30, beamWidth, 20);
+                
+                fill(150, 200, 255, alpha * 0.3);
+                beginShape();
+                vertex(centerX - w, ufoY + 50);
+                vertex(centerX + w, ufoY + 50);
+                vertex(centerX + w * 0.3, height);
+                vertex(centerX - w * 0.3, height);
+                endShape(CLOSE);
+            }
+        }
+        
+        function drawUFO() {
+            push();
+            translate(width / 2, ufoY);
+            
+            // Dome
+            fill(180, 200, 220);
+            stroke(200, 220, 240);
+            strokeWeight(2);
+            ellipse(0, -20, 80, 50);
+            
+            // Dome glow
+            fill(150, 180, 255, 50);
+            noStroke();
+            ellipse(0, -25, 50, 30);
+            
+            // Body
+            fill(120, 130, 150);
+            stroke(180, 190, 210);
+            strokeWeight(2);
+            ellipse(0, 0, 180, 50);
+            
+            // Lights
+            for (let i = 0; i < 8; i++) {
+                const angle = map(i, 0, 8, -PI * 0.7, PI * 0.7);
+                const lx = cos(angle) * 70;
+                const ly = sin(angle) * 15;
+                
+                const lightBrightness = (sin(time * 0.01 + i) + 1) * 0.5;
+                fill(255, 50, 50, 100 + lightBrightness * 155);
+                noStroke();
+                ellipse(lx, ly, 8, 5);
+            }
+            
+            // Ring
+            noFill();
+            stroke(150, 160, 180, 100);
+            strokeWeight(3);
+            ellipse(0, 5, 220, 30);
+            
+            pop();
+        }
+        
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+            resizeGlyphCanvas();
+        }
+        
+        // Scroll interaction
+        let scrollY = 0;
+        window.addEventListener('scroll', () => {
+            scrollY = window.scrollY;
+            targetUfoY = height * 0.35 - scrollY * 0.5;
         });
-      }
-    }
-    
-    // Override draw to include glyphs
-    let originalDraw = draw;
-    draw = function() {
-      originalDraw();
-      
-      // Draw glyphs
-      push();
-      for (let i = glyphs.length - 1; i >= 0; i--) {
-        let g = glyphs[i];
-        fill(0, 255, 136, g.life * 4);
-        textSize(16);
-        textAlign(CENTER);
-        text(g.symbol, g.x, g.y);
-        g.life--;
-        if (g.life <= 0) glyphs.splice(i, 1);
-      }
-      pop();
-    };
-  </script>
+        
+        // Smooth scroll for nav links
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+        
+        // Coin flip animation on click
+        document.querySelectorAll('.coin').forEach(coin => {
+            coin.addEventListener('click', () => {
+                coin.classList.toggle('flipped');
+            });
+        });
+        
+        // Message card reveal
+        document.querySelectorAll('.message-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const preview = card.querySelector('.message-preview');
+                const isExpanded = preview.dataset.expanded === 'true';
+                
+                if (!isExpanded) {
+                    preview.style.color = '#a0b0d0';
+                    preview.dataset.expanded = 'true';
+                } else {
+                    preview.style.color = '#606080';
+                    preview.dataset.expanded = 'false';
+                }
+            });
+        });
+        
+        // Glitch effect on title
+        const title = document.querySelector('.hero h1');
+        setInterval(() => {
+            if (Math.random() > 0.95) {
+                title.style.textShadow = `
+                    ${Math.random() * 10 - 5}px 0 rgba(255,0,0,0.8),
+                    ${Math.random() * 10 - 5}px 0 rgba(0,255,255,0.8)
+                `;
+                setTimeout(() => {
+                    title.style.textShadow = '';
+                }, 100);
+            }
+        }, 100);
+    </script>
 </body>
 </html>

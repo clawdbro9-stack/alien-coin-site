@@ -1,457 +1,697 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE TRUTH IS OUT THERE</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: #000;
-            color: #c0c0c0;
-            font-family: 'Share Tech Mono', monospace;
-            overflow-x: hidden;
-        }
-        
-        #canvas-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 0;
-        }
-        
-        .content {
-            position: relative;
-            z-index: 1;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
-        }
-        
-        .content > * {
-            pointer-events: auto;
-        }
-        
-        .title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2rem, 6vw, 4rem);
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.3em;
-            color: #e0e0e0;
-            text-shadow: 
-                0 0 10px rgba(180, 180, 255, 0.8),
-                0 0 30px rgba(180, 180, 255, 0.5),
-                0 0 60px rgba(180, 180, 255, 0.3);
-            animation: flicker 4s infinite;
-            text-align: center;
-            padding: 0 20px;
-        }
-        
-        .subtitle {
-            font-size: clamp(0.8rem, 2vw, 1.2rem);
-            letter-spacing: 0.5em;
-            color: #808090;
-            margin-top: 20px;
-            text-transform: uppercase;
-            animation: pulse 2s infinite;
-        }
-        
-        .enter-btn {
-            margin-top: 60px;
-            padding: 20px 50px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 0.2em;
-            background: transparent;
-            border: 2px solid #a0a0b0;
-            color: #d0d0e0;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s;
-            text-transform: uppercase;
-        }
-        
-        .enter-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(180, 180, 255, 0.3), transparent);
-            transition: left 0.5s;
-        }
-        
-        .enter-btn:hover {
-            border-color: #b0b0ff;
-            color: #fff;
-            box-shadow: 
-                0 0 20px rgba(180, 180, 255, 0.5),
-                inset 0 0 20px rgba(180, 180, 255, 0.1);
-        }
-        
-        .enter-btn:hover::before {
-            left: 100%;
-        }
-        
-        .glyph-row {
-            position: fixed;
-            bottom: 30px;
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            width: 100%;
-            left: 0;
-        }
-        
-        .glyph {
-            font-size: 1.5rem;
-            color: #606070;
-            cursor: pointer;
-            transition: all 0.3s;
-            opacity: 0.6;
-        }
-        
-        .glyph:hover {
-            color: #b0b0ff;
-            text-shadow: 0 0 15px rgba(180, 180, 255, 0.8);
-            transform: scale(1.3) rotate(10deg);
-            opacity: 1;
-        }
-        
-        .scrolling-message {
-            position: fixed;
-            top: 50%;
-            right: 30px;
-            transform: translateY(-50%) rotate(90deg);
-            font-size: 0.7rem;
-            letter-spacing: 0.3em;
-            color: #404050;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-        
-        @keyframes flicker {
-            0%, 100% { opacity: 1; }
-            92% { opacity: 1; }
-            93% { opacity: 0.8; }
-            94% { opacity: 1; }
-            96% { opacity: 0.9; }
-            97% { opacity: 1; }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-        
-        .scanline {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(0, 0, 0, 0.1) 2px,
-                rgba(0, 0, 0, 0.1) 4px
-            );
-            pointer-events: none;
-            z-index: 100;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALIEN COIN | The Truth Is Out There</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --silver: #c0c0c0;
+      --silver-light: #e8e8e8;
+      --silver-dark: #808080;
+      --alien-green: #00ff88;
+      --cosmic-purple: #8b5cf6;
+      --void-black: #0a0a0f;
+    }
+    
+    body {
+      background: var(--void-black);
+      color: var(--silver);
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+    }
+    
+    #p5-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    
+    .content {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+    }
+    
+    /* Landing Section */
+    .landing {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    
+    .title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2rem, 8vw, 6rem);
+      font-weight: 900;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, var(--silver-light) 0%, var(--silver) 50%, var(--silver-dark) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 60px rgba(192, 192, 192, 0.5);
+      animation: titleGlow 3s ease-in-out infinite;
+    }
+    
+    @keyframes titleGlow {
+      0%, 100% { filter: drop-shadow(0 0 20px rgba(192, 192, 192, 0.3)); }
+      50% { filter: drop-shadow(0 0 40px rgba(192, 192, 192, 0.6)); }
+    }
+    
+    .subtitle {
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      letter-spacing: 0.5em;
+      margin-top: 1rem;
+      color: var(--alien-green);
+      opacity: 0;
+      animation: fadeIn 2s ease-out 1s forwards;
+    }
+    
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    
+    .scroll-hint {
+      position: absolute;
+      bottom: 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fadeIn 2s ease-out 2s forwards;
+      cursor: pointer;
+    }
+    
+    .scroll-hint span {
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+    
+    .scroll-arrow {
+      width: 20px;
+      height: 20px;
+      border-right: 2px solid var(--alien-green);
+      border-bottom: 2px solid var(--alien-green);
+      transform: rotate(45deg);
+      animation: bounce 2s ease-in-out infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50% { transform: rotate(45deg) translateY(10px); }
+    }
+    
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: linear-gradient(180deg, rgba(10,10,15,0.9) 0%, transparent 100%);
+    }
+    
+    .nav-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    
+    .nav-links a {
+      color: var(--silver);
+      text-decoration: none;
+      font-size: 0.9rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+    
+    .nav-links a:hover {
+      color: var(--alien-green);
+      text-shadow: 0 0 10px var(--alien-green);
+    }
+    
+    /* Coins Section */
+    .coins-section {
+      min-height: 100vh;
+      padding: 6rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.5rem, 5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+    
+    .coins-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 3rem;
+      max-width: 1200px;
+      width: 100%;
+    }
+    
+    .coin-card {
+      position: relative;
+      aspect-ratio: 1;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+    }
+    
+    .coin-card:hover {
+      transform: rotateY(180deg) scale(1.05);
+    }
+    
+    .coin-face {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      backface-visibility: hidden;
+      border: 4px solid var(--silver);
+      box-shadow: 
+        0 0 30px rgba(192, 192, 192, 0.3),
+        inset 0 0 60px rgba(192, 192, 192, 0.1);
+    }
+    
+    .coin-front {
+      background: radial-gradient(circle at 30% 30%, var(--silver-light), var(--silver) 40%, var(--silver-dark));
+    }
+    
+    .coin-back {
+      background: radial-gradient(circle at 30% 30%, #1a1a2e, #0a0a1a);
+      border-color: var(--alien-green);
+      transform: rotateY(180deg);
+    }
+    
+    .coin-symbol {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+    
+    .coin-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      color: var(--void-black);
+    }
+    
+    .coin-back .coin-symbol {
+      color: var(--alien-green);
+      text-shadow: 0 0 20px var(--alien-green);
+    }
+    
+    .coin-back .coin-title {
+      color: var(--alien-green);
+      font-size: 0.8rem;
+    }
+    
+    .coin-glyph {
+      position: absolute;
+      font-family: 'Orbitron', sans-serif;
+      color: var(--silver-dark);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+    }
+    
+    .coin-glyph.tl { top: 15%; left: 20%; }
+    .coin-glyph.tr { top: 15%; right: 20%; }
+    .coin-glyph.bl { bottom: 15%; left: 20%; }
+    .coin-glyph.br { bottom: 15%; right: 20%; }
+    
+    /* Messages Section */
+    .messages-section {
+      min-height: 100vh;
+      padding: 6rem 2rem;
+      background: linear-gradient(180deg, transparent 0%, rgba(0, 255, 136, 0.02) 50%, transparent 100%);
+    }
+    
+    .transmission {
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      padding: 2rem;
+      border: 1px solid var(--alien-green);
+      background: rgba(0, 255, 136, 0.03);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .transmission::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+      animation: scan 3s linear infinite;
+    }
+    
+    @keyframes scan {
+      to { left: 100%; }
+    }
+    
+    .transmission-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+    }
+    
+    .signal-indicator {
+      width: 12px;
+      height: 12px;
+      background: var(--alien-green);
+      border-radius: 50%;
+      animation: pulse 1s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--alien-green); }
+      50% { opacity: 0.5; box-shadow: 0 0 5px var(--alien-green); }
+    }
+    
+    .transmission-source {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      color: var(--alien-green);
+    }
+    
+    .transmission-content {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: var(--silver);
+    }
+    
+    .transmission-glyph {
+      position: absolute;
+      font-size: 8rem;
+      opacity: 0.05;
+      color: var(--alien-green);
+    }
+    
+    /* Join Section */
+    .join-section {
+      min-height: 60vh;
+      padding: 6rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    
+    .cta-button {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.3em;
+      padding: 1.5rem 3rem;
+      background: transparent;
+      border: 2px solid var(--alien-green);
+      color: var(--alien-green);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+    
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--alien-green);
+      transition: left 0.3s;
+      z-index: -1;
+    }
+    
+    .cta-button:hover {
+      color: var(--void-black);
+    }
+    
+    .cta-button:hover::before {
+      left: 0;
+    }
+    
+    footer {
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--silver-dark);
+      letter-spacing: 0.1em;
+    }
+  </style>
 </head>
 <body>
-    <div id="canvas-container"></div>
+  <div id="p5-canvas"></div>
+  
+  <div class="content">
+    <nav>
+      <div class="nav-logo">◇ A.C. ◇</div>
+      <ul class="nav-links">
+        <li><a href="#landing">Home</a></li>
+        <li><a href="#coins">Coins</a></li>
+        <li><a href="#messages">Messages</a></li>
+        <li><a href="#join">Join</a></li>
+      </ul>
+    </nav>
     
-    <div class="content">
-        <h1 class="title">The Truth</h1>
-        <p class="subtitle">Is out there</p>
-        <button class="enter-btn" onclick="scrollToSection('truth')">Begin Inquiry</button>
-    </div>
-    
-    <div class="glyph-row">
-        <span class="glyph" data-char="⍙">⍙</span>
-        <span class="glyph" data-char="⍚">⍚</span>
-        <span class="glyph" data-char="⍓">⍓</span>
-        <span class="glyph" data-char="⍝">⍝</span>
-        <span class="glyph" data-char="⍜">⍜</span>
-    </div>
-    
-    <div class="scrolling-message">◀ DECLASSIFIED ▶</div>
-    <div class="scanline"></div>
-    
-    <section id="truth" style="min-height: 150vh; padding: 100px 20px; display: flex; flex-direction: column; align-items: center;">
-        <h2 style="font-family: 'Orbitron'; font-size: 2rem; margin-bottom: 50px; color: #d0d0e0;">THE COINS</h2>
-        <p style="color: #606070; text-align: center; max-width: 600px; margin-bottom: 60px;">Scroll to reveal the ancient currency of visitors from beyond.</p>
-        
-        <div class="coin-gallery" style="display: flex; gap: 40px; flex-wrap: wrap; justify-content: center;">
-            <div class="alien-coin" style="width: 150px; height: 150px; border-radius: 50%; background: linear-gradient(135deg, #2a2a3a, #1a1a2a); border: 3px solid #4a4a6a; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 30px rgba(100,100,255,0.2);">
-                <svg width="80" height="80" viewBox="0 0 80 80">
-                    <circle cx="40" cy="40" r="35" fill="none" stroke="#6a6a8a" stroke-width="2"/>
-                    <circle cx="40" cy="40" r="25" fill="none" stroke="#5a5a7a" stroke-width="1"/>
-                    <text x="40" y="45" text-anchor="middle" fill="#a0a0c0" font-size="24">⍙</text>
-                </svg>
-            </div>
-            <div class="alien-coin" style="width: 150px; height: 150px; border-radius: 50%; background: linear-gradient(135deg, #2a2a3a, #1a1a2a); border: 3px solid #4a4a6a; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 30px rgba(100,100,255,0.2);">
-                <svg width="80" height="80" viewBox="0 0 80 80">
-                    <circle cx="40" cy="40" r="35" fill="none" stroke="#6a6a8a" stroke-width="2"/>
-                    <polygon points="40,15 50,50 30,50" fill="none" stroke="#8a8aaa" stroke-width="2"/>
-                    <circle cx="40" cy="40" r="10" fill="none" stroke="#5a5a7a" stroke-width="1"/>
-                </svg>
-            </div>
-            <div class="alien-coin" style="width: 150px; height: 150px; border-radius: 50%; background: linear-gradient(135deg, #2a2a3a, #1a1a2a); border: 3px solid #4a4a6a; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 30px rgba(100,100,255,0.2);">
-                <svg width="80" height="80" viewBox="0 0 80 80">
-                    <circle cx="40" cy="40" r="35" fill="none" stroke="#6a6a8a" stroke-width="2"/>
-                    <circle cx="25" cy="35" r="8" fill="#4a4a6a"/>
-                    <circle cx="55" cy="35" r="8" fill="#4a4a6a"/>
-                    <ellipse cx="40" cy="55" rx="15" ry="10" fill="none" stroke="#6a6a8a" stroke-width="2"/>
-                </svg>
-            </div>
-        </div>
-        
-        <p style="color: #505060; margin-top: 60px; font-size: 0.8rem; letter-spacing: 0.2em;">◀ SELECT TO EXAMINE ▶</p>
-        
-        <div id="coin-info" style="margin-top: 40px; padding: 30px; border: 1px solid #303040; max-width: 500px; text-align: center; opacity: 0; transition: opacity 0.5s;">
-            <h3 id="coin-title" style="color: #a0a0c0; margin-bottom: 15px; font-family: 'Orbitron';">SELECT A COIN</h3>
-            <p id="coin-desc" style="color: #606070; line-height: 1.6;">Ancient currency recovered from crash sites. Each coin contains a quantum-encrypted memory of the donor's civilization.</p>
-        </div>
-        
-        <button style="margin-top: 40px; padding: 15px 40px; background: transparent; border: 1px solid #4a4a6a; color: #808090; font-family: 'Share Tech Mono'; cursor: pointer; transition: all 0.3s;" onclick="alert('QUANTUM DECRYPTION IN PROGRESS...')">DECRYPT COIN DATA</button>
+    <section id="landing" class="landing">
+      <h1 class="title">Alien Coin</h1>
+      <p class="subtitle">THE TRUTH IS OUT THERE</p>
+      <div class="scroll-hint" onclick="document.getElementById('coins').scrollIntoView({behavior: 'smooth'})">
+        <span>Discover</span>
+        <div class="scroll-arrow"></div>
+      </div>
     </section>
     
-    <style>
-        .alien-coin:hover {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 0 50px rgba(150,150,255,0.5) !important;
-            border-color: #6a6a9a !important;
-        }
-    </style>
+    <section id="coins" class="coins-section">
+      <h2 class="section-title">◈ THE TRUTH ◈</h2>
+      <div class="coins-grid">
+        <div class="coin-card">
+          <div class="coin-face coin-front">
+            <span class="coin-glyph tl">Ω</span>
+            <span class="coin-glyph tr">Ψ</span>
+            <span class="coin-glyph bl">Σ</span>
+            <span class="coin-glyph br">Δ</span>
+            <div class="coin-symbol">👽</div>
+            <div class="coin-title">GREY</div>
+          </div>
+          <div class="coin-face coin-back">
+            <div class="coin-symbol">◈</div>
+            <div class="coin-title">CLASSIFIED</div>
+          </div>
+        </div>
+        
+        <div class="coin-card">
+          <div class="coin-face coin-front">
+            <span class="coin-glyph tl">Ξ</span>
+            <span class="coin-glyph tr">Φ</span>
+            <span class="coin-glyph bl">Γ</span>
+            <span class="coin-glyph br">Λ</span>
+            <div class="coin-symbol">🛸</div>
+            <div class="coin-title">REPTILIAN</div>
+          </div>
+          <div class="coin-face coin-back">
+            <div class="coin-symbol">◇</div>
+            <div class="coin-title">DECLASSIFIED</div>
+          </div>
+        </div>
+        
+        <div class="coin-card">
+          <div class="coin-face coin-front">
+            <span class="coin-glyph tl">Θ</span>
+            <span class="coin-glyph tr">Π</span>
+            <span class="coin-glyph bl">Ω</span>
+            <span class="coin-glyph br">Ψ</span>
+            <div class="coin-symbol">🌌</div>
+            <div class="coin-title">PLEIADIAN</div>
+          </div>
+          <div class="coin-face coin-back">
+            <div class="coin-symbol">✧</div>
+            <div class="coin-title">AUTHORIZED</div>
+          </div>
+        </div>
+      </div>
+    </section>
     
-    <script>
-        // Coin interaction
-        const coinData = [
-            { title: '⍙ - THE WITNESS', desc: 'First contact coin. Issued by the Council of Orion. Contains a holographic map of Earth marking "observation zones."' },
-            { title: '▲ - THE TRAVELER', desc: 'Interstellar toll coin. Valid across 47 star systems. Value: approximately 0.003 Earth years of labor.' },
-            { title: '◯◉◯ - THE OBSERVER', desc: 'Diplomatic currency. Three circles represent the tri-species alliance. Rare - only 10,000 minted.' }
-        ];
-        
-        document.querySelectorAll('.alien-coin').forEach((coin, i) => {
-            coin.addEventListener('click', () => {
-                const info = document.getElementById('coin-info');
-                document.getElementById('coin-title').textContent = coinData[i].title;
-                document.getElementById('coin-desc').textContent = coinData[i].desc;
-                info.style.opacity = '1';
-            });
-        });
-    </script>
+    <section id="messages" class="messages-section">
+      <h2 class="section-title">◈ DECODED TRANSMISSIONS ◈</h2>
+      
+      <div class="transmission">
+        <span class="transmission-glyph">◈</span>
+        <div class="transmission-header">
+          <div class="signal-indicator"></div>
+          <span class="transmission-source">SOURCE: NEBULA-7X</span>
+        </div>
+        <p class="transmission-content">
+          The coins bear our mark. Each one a key. Each one a promise. 
+          When the silver moon aligns with the triple star, the gateway opens.
+          Collect. Wait. Be ready.
+        </p>
+      </div>
+      
+      <div class="transmission">
+        <span class="transmission-glyph">◇</span>
+        <div class="transmission-header">
+          <div class="signal-indicator"></div>
+          <span class="transmission-source">SOURCE: SECTOR 9</span>
+        </div>
+        <p class="transmission-content">
+          We came before. We will come again. The coins are our calling card.
+          Those who hold them... we remember. Those who believe... we watch.
+        </p>
+      </div>
+      
+      <div class="transmission">
+        <span class="transmission-glyph">✧</span>
+        <div class="transmission-header">
+          <div class="signal-indicator"></div>
+          <span class="transmission-source">SOURCE: UNKNOWN ORIGIN</span>
+        </div>
+        <p class="transmission-content">
+          The simulation is breaking down. Soon you will see the seams.
+          Hold tight to your silver. It is more than metal. It is identity.
+          It is proof that you are one of us.
+        </p>
+      </div>
+    </section>
+    
+    <section id="join" class="join-section">
+      <h2 class="section-title">◈ JOIN THE AWAKENING ◈</h2>
+      <p style="margin-bottom: 2rem; max-width: 500px; line-height: 1.8;">
+        The first wave is coming. Our representatives will make contact.
+        Enter your designation below to receive encrypted coordinates.
+      </p>
+      <button class="cta-button">RECEIVE TRANSMISSION</button>
+    </section>
+    
+    <footer>
+      <p>◈ ALL RIGHTS RESERVED ◈ THE TRUTH IS OUT THERE ◈</p>
+    </footer>
+  </div>
 
-    <script>
-        // p5.js sketch for starfield and UFO
-        let stars = [];
-        let ufoY = -100;
-        let beamOpacity = 0;
-        let targetUfoY;
-        
-        function setup() {
-            let canvas = createCanvas(windowWidth, windowHeight);
-            canvas.parent('canvas-container');
-            
-            // Create stars
-            for (let i = 0; i < 300; i++) {
-                stars.push({
-                    x: random(width),
-                    y: random(height),
-                    size: random(0.5, 3),
-                    speed: random(0.2, 1.5),
-                    brightness: random(100, 255)
-                });
-            }
-            
-            targetUfoY = height * 0.35;
-        }
-        
-        function draw() {
-            // Dark space background
-            background(5, 5, 15);
-            
-            // Draw nebula effect
-            drawNebula();
-            
-            // Draw stars
-            drawStars();
-            
-            // Draw UFO beam
-            if (ufoY > -50) {
-                drawBeam();
-            }
-            
-            // Draw UFO
-            drawUFO();
-            
-            // Animate UFO landing
-            ufoY = lerp(ufoY, targetUfoY, 0.01);
-            
-            // Beam fades in as UFO approaches
-            if (ufoY > targetUfoY * 0.5) {
-                beamOpacity = lerp(beamOpacity, 200, 0.02);
-            }
-        }
-        
-        function drawNebula() {
-            noStroke();
-            for (let i = 0; i < 5; i++) {
-                let x = width * (0.2 + i * 0.15);
-                let y = height * (0.3 + sin(frameCount * 0.005 + i) * 0.1);
-                let size = 200 + sin(frameCount * 0.003 + i * 2) * 50;
-                
-                let c = color(30 + i * 10, 20, 50, 15);
-                fill(c);
-                ellipse(x, y, size, size * 0.6);
-            }
-        }
-        
-        function drawStars() {
-            noStroke();
-            for (let star of stars) {
-                let alpha = star.brightness + sin(frameCount * 0.05 + star.x) * 30;
-                fill(200, 210, 255, alpha);
-                ellipse(star.x, star.y, star.size);
-                
-                // Twinkle
-                if (random() < 0.002) {
-                    fill(255, 255, 255, 200);
-                    ellipse(star.x, star.y, star.size * 3);
-                }
-                
-                // Move stars slightly
-                star.y += star.speed * 0.1;
-                if (star.y > height) {
-                    star.y = 0;
-                    star.x = random(width);
-                }
-            }
-        }
-        
-        function drawBeam() {
-            push();
-            let beamCenterX = width / 2;
-            
-            // Outer glow
-            for (let i = 5; i > 0; i--) {
-                let alpha = beamOpacity * 0.1 / i;
-                let beamWidth = 150 + i * 30;
-                fill(100, 150, 255, alpha);
-                triangle(
-                    beamCenterX, ufoY + 40,
-                    beamCenterX - beamWidth, height,
-                    beamCenterX + beamWidth, height
-                );
-            }
-            
-            // Core beam
-            fill(150, 200, 255, beamOpacity * 0.3);
-            triangle(
-                beamCenterX, ufoY + 40,
-                beamCenterX - 80, height,
-                beamCenterX + 80, height
-            );
-            
-            // Beam lines
-            stroke(200, 230, 255, beamOpacity * 0.4);
-            strokeWeight(1);
-            for (let i = 0; i < 7; i++) {
-                let xOffset = map(i, 0, 6, -60, 60);
-                let y1 = ufoY + 50 + random(10);
-                let y2 = height;
-                line(beamCenterX + xOffset, y1, beamCenterX + xOffset * 2, y2);
-            }
-            pop();
-        }
-        
-        function drawUFO() {
-            push();
-            translate(width / 2, ufoY);
-            
-            let hover = sin(frameCount * 0.08) * 5;
-            
-            // Dome glow
-            noStroke();
-            for (let i = 5; i > 0; i--) {
-                fill(100, 150, 255, 10 / i);
-                ellipse(0, hover - 10, 60 + i * 15, 40 + i * 10);
-            }
-            
-            // Dome
-            fill(150, 180, 220, 150);
-            ellipse(0, hover - 10, 60, 40);
-            
-            // Dome highlight
-            fill(255, 255, 255, 100);
-            ellipse(-10, hover - 15, 20, 15);
-            
-            // Body
-            fill(80, 85, 95);
-            ellipse(0, hover, 120, 30);
-            
-            // Body ring
-            fill(100, 105, 115);
-            ellipse(0, hover, 130, 35);
-            
-            // Lights
-            let lightCount = 7;
-            for (let i = 0; i < lightCount; i++) {
-                let angle = map(i, 0, lightCount - 1, -PI * 0.7, PI * 0.7);
-                let lx = cos(angle) * 50;
-                let ly = sin(angle) * 10;
-                let blink = sin(frameCount * 0.2 + i) > 0;
-                
-                fill(blink ? color(200, 255, 200) : color(100, 150, 100));
-                ellipse(lx, hover + ly + 5, 6, 4);
-            }
-            
-            // Bottom lights
-            fill(200, 100, 100, 150 + sin(frameCount * 0.1) * 50);
-            ellipse(-30, hover + 15, 8, 5);
-            ellipse(30, hover + 15, 8, 5);
-            
-            pop();
-        }
-        
-        function windowResized() {
-            resizeCanvas(windowWidth, windowHeight);
-        }
-        
-        function scrollToSection(id) {
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        // Glyph interaction
-        document.querySelectorAll('.glyph').forEach(glyph => {
-            glyph.addEventListener('click', () => {
-                let char = glyph.dataset.char;
-                glyph.style.transform = 'scale(1.5) rotate(360deg)';
-                setTimeout(() => {
-                    glyph.style.transform = '';
-                }, 500);
-            });
+  <script>
+    // p5.js Starfield & UFO Background
+    let stars = [];
+    let ufoY;
+    let beamOpacity = 0;
+    let beamDirection = 1;
+    
+    function setup() {
+      let canvas = createCanvas(windowWidth, windowHeight);
+      canvas.parent('p5-canvas');
+      
+      // Create starfield
+      for (let i = 0; i < 300; i++) {
+        stars.push({
+          x: random(width),
+          y: random(height),
+          size: random(0.5, 3),
+          brightness: random(100, 255),
+          twinkleSpeed: random(0.01, 0.05)
         });
-    </script>
+      }
+      
+      ufoY = height * 0.35;
+    }
+    
+    function draw() {
+      background(10, 10, 15);
+      
+      // Draw stars
+      for (let star of stars) {
+        let alpha = sin(frameCount * star.twinkleSpeed) * 50 + star.brightness;
+        fill(200, 220, 255, alpha);
+        noStroke();
+        ellipse(star.x, star.y, star.size);
+      }
+      
+      // Draw nebula clouds
+      drawNebula();
+      
+      // Draw UFO
+      drawUFO(width / 2, ufoY);
+      
+      // Draw beam
+      if (ufoY > height * 0.25) {
+        drawBeam(width / 2, ufoY + 40);
+      }
+      
+      // Animate UFO
+      ufoY += sin(frameCount * 0.02) * 0.3;
+    }
+    
+    function drawNebula() {
+      // Purple nebula
+      push();
+      for (let i = 0; i < 5; i++) {
+        let x = width * (0.2 + i * 0.15);
+        let y = height * (0.3 + sin(frameCount * 0.001 + i) * 0.1);
+        let size = 200 + sin(frameCount * 0.01 + i * 2) * 50;
+        
+        let c = color(139, 92, 246, 15);
+        fill(c);
+        noStroke();
+        ellipse(x, y, size, size * 0.6);
+      }
+      pop();
+      
+      // Green glow
+      push();
+      for (let i = 0; i < 3; i++) {
+        let x = width * (0.3 + i * 0.2);
+        let y = height * (0.7 + cos(frameCount * 0.008 + i) * 0.05);
+        
+        let c = color(0, 255, 136, 8);
+        fill(c);
+        ellipse(x, y, 150, 100);
+      }
+      pop();
+    }
+    
+    function drawUFO(x, y) {
+      push();
+      
+      // UFO body
+      fill(80, 80, 90);
+      stroke(120, 120, 130);
+      strokeWeight(2);
+      ellipse(x, y, 120, 40);
+      
+      // Dome
+      fill(100, 150, 200, 150);
+      noStroke();
+      ellipse(x, y - 15, 50, 35);
+      
+      // Lights
+      for (let i = 0; i < 8; i++) {
+        let angle = PI + (TWO_PI / 8) * i;
+        let lx = x + cos(angle) * 50;
+        let ly = y + sin(angle) * 15;
+        
+        let blink = sin(frameCount * 0.2 + i) > 0;
+        fill(blink ? color(0, 255, 136) : color(100, 100, 100));
+        ellipse(lx, ly, 6, 4);
+      }
+      
+      // Glow underneath
+      fill(0, 255, 136, 30);
+      ellipse(x, y + 20, 80, 30);
+      
+      pop();
+    }
+    
+    function drawBeam(x, y) {
+      push();
+      
+      beamOpacity += beamDirection * 2;
+      if (beamOpacity > 80) beamDirection = -1;
+      if (beamOpacity < 20) beamDirection = 1;
+      
+      // Multiple beam layers
+      for (let i = 0; i < 5; i++) {
+        let alpha = beamOpacity - i * 15;
+        if (alpha > 0) {
+          fill(0, 255, 136, alpha * 0.3);
+          noStroke();
+          
+          beginShape();
+          vertex(x - 60 + i * 5, y);
+          vertex(x + 60 - i * 5, y);
+          vertex(x + 150 - i * 20, height);
+          vertex(x - 150 + i * 20, height);
+          endShape(CLOSE);
+        }
+      }
+      
+      // Core beam
+      fill(200, 255, 220, beamOpacity * 0.5);
+      beginShape();
+      vertex(x - 30, y);
+      vertex(x + 30, y);
+      vertex(x + 60, height);
+      vertex(x - 60, height);
+      endShape(CLOSE);
+      
+      pop();
+    }
+    
+    function windowResized() {
+      resizeCanvas(windowWidth, windowHeight);
+    }
+    
+    // Mouse interaction with alien glyphs
+    let glyphs = [];
+    
+    function mouseMoved() {
+      // Add subtle particle effect on mouse move
+      if (random() > 0.7) {
+        glyphs.push({
+          x: mouseX,
+          y: mouseY,
+          life: 60,
+          symbol: random(['◈', '◇', '✧', 'Ω', 'Ψ'])
+        });
+      }
+    }
+    
+    // Override draw to include glyphs
+    let originalDraw = draw;
+    draw = function() {
+      originalDraw();
+      
+      // Draw glyphs
+      push();
+      for (let i = glyphs.length - 1; i >= 0; i--) {
+        let g = glyphs[i];
+        fill(0, 255, 136, g.life * 4);
+        textSize(16);
+        textAlign(CENTER);
+        text(g.symbol, g.x, g.y);
+        g.life--;
+        if (g.life <= 0) glyphs.splice(i, 1);
+      }
+      pop();
+    };
+  </script>
 </body>
 </html>
